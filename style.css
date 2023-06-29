@@ -45,6 +45,10 @@ p {
   margin: 1rem 1rem;
 }
 
+h1 {
+  border-bottom: dashed 1px var(--ctp-macchiato-green);
+}
+
 body {
   display: flex;
   height: 100dvh;
