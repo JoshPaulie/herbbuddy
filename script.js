@@ -1,28 +1,10 @@
 "use strict";
 
-const getAvgItemPrice = async (seedID, herbID) => {
-  try {
-    const response = await fetch("https://prices.runescape.wiki/api/v1/osrs/latest");
-    const data = await response.json();
-    const herb_high_price = data["data"][herbID]["high"];
-    const herb_low_price = data["data"][herbID]["low"];
-    const seed_high_price = data["data"][seedID]["high"];
-    const seed_low_price = data["data"][seedID]["low"];
-
-    const herbPrice = Math.round((herb_high_price + herb_low_price) / 2);
-    const seedPrice = Math.round((seed_high_price + seed_low_price) / 2);
-
-    return [seedPrice, herbPrice];
-  } catch (error) {
-    console.error("Error:", error);
-  }
-};
-
 const RANARR_SEED_ID = 5295;
 const RANARR_HERB_ID = 257;
 
 let typingTimer;
-const doneTypingInterval = 800; // 800 milliseconds
+const doneTypingInterval = 800; // milliseconds
 
 const herbCountInput = document.getElementById("herbCountInput");
 const patchCountInput = document.getElementById("patchCountInput");
@@ -42,14 +24,13 @@ const calcRunProfit = () => {
   getAvgItemPrice(RANARR_SEED_ID, RANARR_HERB_ID)
     .then((prices) => {
       const [ranarrSeedPrice, ranarrHerbPrice] = prices;
-      // Calculations
+
       let patchCount = parseInt(patchCountInput.value);
       let herbCount = parseInt(herbCountInput.value);
 
       let seedCost = patchCount * ranarrSeedPrice;
       let harvestValue = herbCount * ranarrHerbPrice;
       let herbRunProfit = harvestValue - seedCost;
-      console.log(herbRunProfit.toLocaleString("en-US"));
 
       document.getElementById("harvest-count").textContent = herbCount;
       document.getElementById("patch-count").textContent = patchCount;
@@ -63,4 +44,35 @@ const calcRunProfit = () => {
     .catch((error) => {
       console.error("Error:", error);
     });
+};
+
+const fetchData = async (url) => {
+  const response = await fetch(url);
+  return response.json();
+};
+
+const extractPrices = (data, id) => {
+  const high_price = data["data"][id]["high"];
+  const low_price = data["data"][id]["low"];
+  return { high_price, low_price };
+};
+
+const calcAveragePrice = (high_price, low_price) => {
+  return Math.round((high_price + low_price) / 2);
+};
+
+const getAvgItemPrice = async (seedID, herbID) => {
+  try {
+    const data = await fetchData("https://prices.runescape.wiki/api/v1/osrs/latest");
+
+    const { high_price: seed_high_price, low_price: seed_low_price } = extractPrices(data, seedID);
+    const { high_price: herb_high_price, low_price: herb_low_price } = extractPrices(data, herbID);
+
+    const seedPrice = calcAveragePrice(seed_high_price, seed_low_price);
+    const herbPrice = calcAveragePrice(herb_high_price, herb_low_price);
+
+    return [seedPrice, herbPrice];
+  } catch (error) {
+    console.error("Error:", error);
+  }
 };
