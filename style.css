@@ -72,12 +72,15 @@ label {
   text-align: center;
 }
 
-#main-content {
-  display: none;
-  width: 30%;
-  border: solid 0.02rem var(--ctp-macchiato-lavender);
+.text-box {
+  border: solid 1px var(--ctp-macchiato-lavender);
   background-color: var(--ctp-macchiato-crust);
   border-radius: 0.5rem;
+}
+
+#main-content {
+  display: none;
+  width: fit-content;
 }
 
 #herbCountInput,
@@ -87,9 +90,6 @@ label {
   text-align: center;
   color: var(--ctp-macchiato-text);
   background-color: transparent;
-  border: solid 0.02rem var(--ctp-macchiato-lavender);
-  background-color: var(--ctp-macchiato-crust);
-  border-radius: 0.5rem;
   padding: 0.5rem 0rem;
   width: 4rem;
   margin: 1rem;
@@ -98,6 +98,22 @@ label {
 #herbCountInput ::-webkit-input-placeholder,
 #patchCountInput ::-webkit-input-placeholder {
   color: var(--ctp-macchiato-overlay0);
+}
+
+/* Remove counter arrows for Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Remove counter arrows for FireFox browsers (HUGE MASSIVE EYEROLL) */
+input[type="number"] {
+  appearance: textfield;
+}
+
+.about-text {
+  width: 50%;
 }
 
 .input-container {
@@ -137,6 +153,10 @@ label {
   color: var(--ctp-macchiato-peach);
 }
 
+.center-text {
+  text-align: center;
+}
+
 .coins-img {
   position: relative;
   width: 1rem;
@@ -146,6 +166,9 @@ label {
 @media only screen and (max-width: 600px) {
   .mobile-warning {
     display: block;
+  }
+  .about-text {
+    width: 100%;
   }
   body {
     justify-content: normal;

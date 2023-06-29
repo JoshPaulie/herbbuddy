@@ -9,23 +9,24 @@
     <link rel="stylesheet" href="style.css" />
     <link rel="shortcut icon" href="Herb.ico" type="image/x-icon" />
   </head>
-  <body class="center-text">
-    <div class="mobile-warning">🚧 Though functional, this site has not been optimized for mobile 📱</div>
+  <body>
+    <div class="mobile-warning">🚧 Though functional, this site isn't been optimized for mobile 📱</div>
     <h1>Herb Buddy 🌱</h1>
-
+    <div class="about-text">
+      <p class="center-text"><em>Simple tool to calculate the profit from your last herb run</em></p>
+      <p><b class="peach-text">Herbs</b> is how many herbs you harvested; <b class="peach-text">Patches</b> is how many patches (or <em>seeds</em>) used</p>
+    </div>
     <div class="input-container">
       <div class="input-pair">
         <label for="herbCountInput">Herbs</label>
-        <input type="text" id="herbCountInput" placeholder="0" />
+        <input type="number" class="text-box" id="herbCountInput" placeholder="0" />
       </div>
-
       <div class="input-pair">
         <label for="patchCountInput">Patches</label>
-        <input type="text" id="patchCountInput" placeholder="0" value="8" />
+        <input type="number" class="text-box" id="patchCountInput" placeholder="0" value="8" />
       </div>
     </div>
-
-    <div id="main-content">
+    <div id="main-content" class="text-box">
       <p>
         With <span class="peach-text" id="harvest-count">...</span> ranarr herbs harvested from <span class="peach-text" id="patch-count">...</span> patches, <br />
         you made about <span class="profit-amount green-text" id="profit-amount">...</span> <img class="coins-img" src="coins.png" alt="OSRS coins" /> profit. Nice!
