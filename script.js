@@ -32,8 +32,8 @@ herbCountInput.addEventListener("input", function () {
 });
 
 const calcRunProfit = () => {
-  Promise.all([getAvgItemPrice(RANARR_SEED_ID, RANARR_HERB_ID)])
-    .then(([prices]) => {
+  getAvgItemPrice(RANARR_SEED_ID, RANARR_HERB_ID)
+    .then((prices) => {
       const [ranarrSeedPrice, ranarrHerbPrice] = prices;
       // Calculations
       let patchCount = 8; // ! Will be user in
