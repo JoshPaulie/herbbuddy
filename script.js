@@ -25,8 +25,15 @@ let typingTimer;
 const doneTypingInterval = 800; // 800 milliseconds
 
 const herbCountInput = document.getElementById("herbCountInput");
+const patchCountInput = document.getElementById("patchCountInput");
+const mainContent = document.getElementById("main-content");
 
 herbCountInput.addEventListener("input", function () {
+  clearTimeout(typingTimer);
+  typingTimer = setTimeout(calcRunProfit, doneTypingInterval);
+});
+
+patchCountInput.addEventListener("input", function () {
   clearTimeout(typingTimer);
   typingTimer = setTimeout(calcRunProfit, doneTypingInterval);
 });
@@ -36,8 +43,8 @@ const calcRunProfit = () => {
     .then((prices) => {
       const [ranarrSeedPrice, ranarrHerbPrice] = prices;
       // Calculations
-      let patchCount = 8; // ! Will be user in
-      let herbCount = parseInt(herbCountInput.value); // ! Will be user in
+      let patchCount = parseInt(patchCountInput.value);
+      let herbCount = parseInt(herbCountInput.value);
 
       let seedCost = patchCount * ranarrSeedPrice;
       let harvestValue = herbCount * ranarrHerbPrice;
@@ -45,7 +52,13 @@ const calcRunProfit = () => {
       console.log(herbRunProfit.toLocaleString("en-US"));
 
       document.getElementById("harvest-count").textContent = herbCount;
+      document.getElementById("patch-count").textContent = patchCount;
       document.getElementById("profit-amount").textContent = herbRunProfit.toLocaleString("en-US");
+
+      mainContent.style.display = "block";
+      if (isNaN(herbCount) | isNaN(patchCount) | isNaN(herbRunProfit)) {
+        mainContent.style.display = "none";
+      }
     })
     .catch((error) => {
       console.error("Error:", error);

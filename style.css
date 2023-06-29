@@ -65,13 +65,15 @@ footer {
 }
 
 #main-content {
+  display: none;
   width: 30%;
   border: solid 0.02rem var(--ctp-macchiato-lavender);
   background-color: var(--ctp-macchiato-crust);
   border-radius: 0.5rem;
 }
 
-#herbCountInput {
+#herbCountInput,
+#patchCountInput {
   font-size: inherit;
   font: inherit;
   text-align: center;
@@ -85,8 +87,15 @@ footer {
   margin: 1rem;
 }
 
-#herbCountInput::-webkit-input-placeholder {
+#herbCountInput ::-webkit-input-placeholder,
+#patchCountInput ::-webkit-input-placeholder {
   color: var(--ctp-macchiato-overlay0);
+}
+
+.input-container {
+  width: 25%;
+  display: flex;
+  justify-content: space-between;
 }
 
 .mobile-warning {
@@ -124,6 +133,9 @@ footer {
   }
   body {
     justify-content: normal;
+  }
+  .input-container {
+    width: 75%;
   }
   #main-content {
     width: 100%;
