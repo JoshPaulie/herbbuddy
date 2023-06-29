@@ -130,13 +130,6 @@ input[type="number"] {
   flex-direction: column;
 }
 
-.mobile-warning {
-  display: none;
-  background-color: var(--ctp-macchiato-red);
-  color: var(--ctp-macchiato-base);
-  text-align: center;
-}
-
 .red-text {
   color: var(--ctp-macchiato-red);
 }
@@ -164,9 +157,6 @@ input[type="number"] {
 }
 
 @media only screen and (max-width: 600px) {
-  .mobile-warning {
-    display: block;
-  }
   .about-text {
     width: 100%;
   }
