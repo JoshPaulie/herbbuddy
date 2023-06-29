@@ -122,6 +122,9 @@ footer {
   .mobile-warning {
     display: block;
   }
+  body {
+    justify-content: normal;
+  }
   #main-content {
     width: 100%;
     border: none;
