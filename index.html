@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Herb Buddy</title>
+    <script defer src="script.js"></script>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="shortcut icon" href="Herb.ico" type="image/x-icon" />
+  </head>
+  <body class="center-text">
+    <div class="mobile-warning">🚧 Though functional, this site has not been optimized for mobile 📱</div>
+    <h1>Herb Buddy</h1>
+
+    <label for="herbCountInput">How many herbs did you harvest?</label>
+    <input type="text" id="herbCountInput" placeholder="0" />
+
+    <div id="main-content">
+      <p>
+        With <span class="peach-text" id="harvest-count">...</span> ranarr herbs harvested from <span class="peach-text" id="patch-count">8</span> patches, you made about <span class="profit-amount green-text" id="profit-amount">...</span>
+        <img class="coins-img" src="coins.png" alt="OSRS coins" /> profit. Nice!
+      </p>
+    </div>
+    <footer>Pulls the average price of seeds and herbs from official wiki api</footer>
+  </body>
+</html>
