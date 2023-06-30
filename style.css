@@ -156,6 +156,12 @@ input[type="number"] {
   top: 0.2rem;
 }
 
+.cutie-anchor {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: var(--ctp-macchiato-blue) dotted 1px;
+}
+
 @media only screen and (max-width: 600px) {
   .about-text {
     width: 100%;
