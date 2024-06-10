@@ -2,77 +2,99 @@
 
 const RANARR_SEED_ID = 5295;
 const RANARR_HERB_ID = 257;
+const DONE_TYPING_INTERVAL = 800; // milliseconds
 
 let typingTimer;
-const doneTypingInterval = 800; // milliseconds
 
 const herbCountInput = document.getElementById("herbCountInput");
 const patchCountInput = document.getElementById("patchCountInput");
 const mainContent = document.getElementById("main-content");
 
-herbCountInput.addEventListener("input", function () {
-  clearTimeout(typingTimer);
-  typingTimer = setTimeout(calcRunProfit, doneTypingInterval);
-});
+const addTypingListener = (element) => {
+  element.addEventListener("input", () => {
+    clearTimeout(typingTimer);
+    typingTimer = setTimeout(calcRunProfit, DONE_TYPING_INTERVAL);
+  });
+};
 
-patchCountInput.addEventListener("input", function () {
-  clearTimeout(typingTimer);
-  typingTimer = setTimeout(calcRunProfit, doneTypingInterval);
-});
+addTypingListener(herbCountInput);
+addTypingListener(patchCountInput);
 
-const calcRunProfit = () => {
-  getAvgItemPrice(RANARR_SEED_ID, RANARR_HERB_ID)
-    .then((prices) => {
-      const [ranarrSeedPrice, ranarrHerbPrice] = prices;
+const calcRunProfit = async () => {
+  try {
+    const [ranarrSeedPrice, ranarrHerbPrice] = await getAvgItemPrice(
+      RANARR_SEED_ID,
+      RANARR_HERB_ID,
+    );
 
-      let patchCount = parseInt(patchCountInput.value);
-      let herbCount = parseInt(herbCountInput.value);
+    const patchCount = parseInt(patchCountInput.value);
+    const herbCount = parseInt(herbCountInput.value);
 
-      let seedCost = patchCount * ranarrSeedPrice;
-      let harvestValue = herbCount * ranarrHerbPrice;
-      let herbRunProfit = harvestValue - seedCost;
+    if (isNaN(patchCount) || isNaN(herbCount)) {
+      mainContent.style.display = "none";
+      return;
+    }
 
-      document.getElementById("harvest-count").textContent = herbCount;
-      document.getElementById("patch-count").textContent = patchCount;
-      document.getElementById("profit-amount").textContent = herbRunProfit.toLocaleString("en-US");
+    const seedCost = patchCount * ranarrSeedPrice;
+    const harvestValue = herbCount * ranarrHerbPrice;
+    const herbRunProfit = harvestValue - seedCost;
 
-      mainContent.style.display = "block";
-      if (isNaN(herbCount) | isNaN(patchCount) | isNaN(herbRunProfit)) {
-        mainContent.style.display = "none";
-      }
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-    });
+    document.getElementById("harvest-count").textContent = herbCount;
+    document.getElementById("patch-count").textContent = patchCount;
+    document.getElementById("profit-amount").textContent =
+      herbRunProfit.toLocaleString("en-US");
+
+    mainContent.style.display = "block";
+  } catch (error) {
+    console.error("Error calculating profit:", error);
+    mainContent.style.display = "none";
+  }
 };
 
 const fetchData = async (url) => {
-  const response = await fetch(url);
-  return response.json();
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    throw error;
+  }
 };
 
 const extractPrices = (data, id) => {
-  const high_price = data["data"][id]["high"];
-  const low_price = data["data"][id]["low"];
-  return { high_price, low_price };
+  const highPrice = data["data"][id]["high"];
+  const lowPrice = data["data"][id]["low"];
+  return { highPrice, lowPrice };
 };
 
-const calcAveragePrice = (high_price, low_price) => {
-  return Math.round((high_price + low_price) / 2);
+const calcAveragePrice = (highPrice, lowPrice) => {
+  return Math.round((highPrice + lowPrice) / 2);
 };
 
 const getAvgItemPrice = async (seedID, herbID) => {
   try {
-    const data = await fetchData("https://prices.runescape.wiki/api/v1/osrs/latest");
+    const data = await fetchData(
+      "https://prices.runescape.wiki/api/v1/osrs/latest",
+    );
 
-    const { high_price: seed_high_price, low_price: seed_low_price } = extractPrices(data, seedID);
-    const { high_price: herb_high_price, low_price: herb_low_price } = extractPrices(data, herbID);
+    const { highPrice: seedHighPrice, lowPrice: seedLowPrice } = extractPrices(
+      data,
+      seedID,
+    );
+    const { highPrice: herbHighPrice, lowPrice: herbLowPrice } = extractPrices(
+      data,
+      herbID,
+    );
 
-    const seedPrice = calcAveragePrice(seed_high_price, seed_low_price);
-    const herbPrice = calcAveragePrice(herb_high_price, herb_low_price);
+    const seedPrice = calcAveragePrice(seedHighPrice, seedLowPrice);
+    const herbPrice = calcAveragePrice(herbHighPrice, herbLowPrice);
 
     return [seedPrice, herbPrice];
   } catch (error) {
-    console.error("Error:", error);
+    console.error("Error fetching item prices:", error);
+    throw error;
   }
 };
