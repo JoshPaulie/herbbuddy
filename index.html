@@ -1,17 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y74KSLCMNJ"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag("js", new Date());
-
-      gtag("config", "G-Y74KSLCMNJ");
-    </script>
     <!-- Link sheets, scripts, ico -->
     <script defer src="script.js"></script>
     <link rel="stylesheet" href="style.css" />
@@ -28,32 +17,97 @@
     <meta property="og:image" content="https://github.com/JoshPaulie/herbbuddy/blob/master/assets/herb-buddy-logo.png" />
     <meta property="og:description" content="Simple tool to calculate the profit from your last herb run with the latest prices" />
     <meta name="theme-color" content="#a6da95" />
+    <!-- Icons -->
+    <link href="https://cdn.lineicons.com/5.0/lineicons.css" rel="stylesheet" />
   </head>
   <body>
-    <p class="center-class"><img src="assets/herb-buddy-logo.png" class="logo" /></p>
-    <h1 class="green-underline">Herb Buddy</h1>
-    <div class="about-text">
-      <p class="center-text"><em>Simple tool to calculate the profit from your last herb run with the latest prices</em></p>
-      <p><b class="peach-text">Herbs</b> is how many herbs you harvested; <b class="peach-text">Patches</b> is how many patches (or <em>seeds</em>) used</p>
-    </div>
-    <div class="input-container">
-      <div class="input-pair">
-        <label for="herbCountInput">Herbs</label>
-        <input type="number" class="text-box" id="herbCountInput" placeholder="0" />
-      </div>
-      <div class="input-pair">
-        <label for="patchCountInput">Patches</label>
-        <input type="number" class="text-box" id="patchCountInput" placeholder="0" value="8" />
-      </div>
-    </div>
-    <div id="main-content" class="text-box">
-      <p>
-        With <span class="peach-text" id="harvest-count">...</span> ranarr herbs harvested from <span class="peach-text" id="patch-count">...</span> patches, <br />
-        you made about <span class="profit-amount green-text" id="profit-amount">...</span> <img class="coins-img" src="assets/coins.png" alt="OSRS coins" /> profit. Nice!
-      </p>
-    </div>
+    <!-- Floating GitHub Button -->
+    <a href="https://github.com/joshpaulie/herbbuddy" class="github-floating-btn" title="View on GitHub" aria-label="View on GitHub">
+      <i class="lni lni-github"></i>
+    </a>
+
+    <main class="container">
+      <header class="header">
+        <div class="title-section">
+          <img src="assets/herb-buddy-logo.png" class="logo" alt="Herb Buddy Logo" />
+          <h1>Herb Buddy</h1>
+        </div>
+        <p class="subtitle">Calculate profit from your herb runs with live OSRS prices</p>
+      </header>
+
+      <section class="calculator">
+        <div class="herb-selection">
+          <label for="herbTypeSelect">Herb Type</label>
+          <div class="herb-controls">
+            <select id="herbTypeSelect" class="herb-select">
+              <!-- Options will be populated by JavaScript -->
+            </select>
+            <button class="refresh-btn" id="refreshPricesBtn" title="Refresh prices" aria-label="Refresh prices"><i class="lni lni-refresh-circle-1-clockwise"></i></button>
+          </div>
+        </div>
+
+        <div class="inputs-grid">
+          <div class="input-group">
+            <label for="herbCountInput">Herbs Harvested</label>
+            <input type="number" id="herbCountInput" placeholder="0" min="0" />
+            <div class="price-info" id="herbPriceDisplay">
+              <span class="price-value" id="herbPriceValue">Loading...</span>
+              <span class="price-label">per herb</span>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="patchCountInput">Patches Used</label>
+            <input type="number" id="patchCountInput" placeholder="8" value="8" min="0" />
+            <div class="price-info" id="seedPriceDisplay">
+              <span class="price-value" id="seedPriceValue">Loading...</span>
+              <span class="price-label">per seed</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="main-content" class="results" style="display: none">
+          <div class="profit-display">
+            <i class="lni lni-question-mark-circle profit-info-icon" id="profitInfoIcon" title="How is profit calculated?"></i>
+            <div class="profit-amount">
+              <span id="profit-amount">0</span>
+              <img class="coins-img" src="assets/coins.png" alt="coins" />
+            </div>
+            <div class="profit-details"><span id="harvest-count">0</span> <span id="herb-name">ranarr</span> herbs from <span id="patch-count">0</span> patches</div>
+          </div>
+        </div>
+      </section>
+    </main>
+
     <footer>
-      <p>RSN: <b>bexlii</b> | <a class="cutie-anchor" href="https://github.com/joshpaulie/herbbuddy">GitHub Repo</a></p>
+      <p>RSN: <b>bexlii</b> | <span id="version-display"></span></p>
     </footer>
+
+    <!-- Profit Calculation Modal -->
+    <div id="profitModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>How Profit is Calculated</h3>
+          <span class="close-modal" id="closeModal">&times;</span>
+        </div>
+        <div class="modal-body">
+          <p>The profit calculation is straightforward:</p>
+          <div class="formula">
+            <strong>Profit = (Herbs Harvested × Herb Price) - (Patches Used × Seed Price)</strong>
+          </div>
+          <div class="formula-breakdown">
+            <h4>Example:</h4>
+            <ul>
+              <li><strong>Herbs Harvested:</strong> 5 Ranarr herbs</li>
+              <li><strong>Herb Price:</strong> 8,000 gp each</li>
+              <li><strong>Patches Used:</strong> 8 patches</li>
+              <li><strong>Seed Price:</strong> 40,000 gp each</li>
+            </ul>
+            <p><strong>Calculation:</strong> (5 × 8,000) - (8 × 40,000) = 40,000 - 320,000 = <span style="color: #ed8796">-280,000 gp</span></p>
+          </div>
+          <p><small>Prices are fetched live from the OSRS API and may fluctuate.</small></p>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
