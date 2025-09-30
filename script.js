@@ -21,11 +21,7 @@ Dwarf,267,5303
 Torstol,269,5304`;
 
 let herbData = [];
-let cachedPrices = {
-  seedPrice: null,
-  herbPrice: null,
-  lastFetched: null,
-};
+let cachedPrices = {}; // Will store prices by herb name: { herbName: { seedPrice, herbPrice, lastFetched } }
 let isLoadingPrices = false;
 
 // DOM elements
@@ -72,6 +68,22 @@ const getSelectedHerbData = () => {
   return herbData.find((herb) => herb.name === selectedName);
 };
 
+// Get cached prices for the selected herb
+const getSelectedHerbPrices = () => {
+  const selectedHerb = getSelectedHerbData();
+  if (!selectedHerb) return null;
+  return cachedPrices[selectedHerb.name] || null;
+};
+
+// Set cached prices for a specific herb
+const setHerbPrices = (herbName, seedPrice, herbPrice) => {
+  cachedPrices[herbName] = {
+    seedPrice,
+    herbPrice,
+    lastFetched: new Date(),
+  };
+};
+
 // Save selected herb to localStorage
 const saveSelectedHerb = () => {
   localStorage.setItem("selectedHerb", herbTypeSelect.value);
@@ -115,15 +127,16 @@ const updateHerbNameDisplay = () => {
 const updatePriceDisplays = () => {
   const herbPriceElement = document.getElementById("herbPriceValue");
   const seedPriceElement = document.getElementById("seedPriceValue");
+  const selectedHerbPrices = getSelectedHerbPrices();
 
   if (isLoadingPrices) {
     herbPriceElement.textContent = "Loading...";
     seedPriceElement.textContent = "Loading...";
     herbPriceElement.classList.add("loading");
     seedPriceElement.classList.add("loading");
-  } else if (cachedPrices.herbPrice && cachedPrices.seedPrice) {
-    herbPriceElement.textContent = `${cachedPrices.herbPrice.toLocaleString("en-US")} gp`;
-    seedPriceElement.textContent = `${cachedPrices.seedPrice.toLocaleString("en-US")} gp`;
+  } else if (selectedHerbPrices && selectedHerbPrices.herbPrice && selectedHerbPrices.seedPrice) {
+    herbPriceElement.textContent = `${selectedHerbPrices.herbPrice.toLocaleString("en-US")} gp`;
+    seedPriceElement.textContent = `${selectedHerbPrices.seedPrice.toLocaleString("en-US")} gp`;
     herbPriceElement.classList.remove("loading");
     seedPriceElement.classList.remove("loading");
   } else {
@@ -183,6 +196,15 @@ const fetchAndCachePrices = async () => {
   const selectedHerb = getSelectedHerbData();
   if (!selectedHerb) return;
 
+  // Check if we already have cached prices for this herb
+  const existingPrices = getSelectedHerbPrices();
+  if (existingPrices && existingPrices.seedPrice && existingPrices.herbPrice) {
+    console.log(`Using cached prices for ${selectedHerb.name}`);
+    updatePriceDisplays();
+    calcRunProfit();
+    return;
+  }
+
   try {
     // Show loading state
     setInputsLoadingState(true);
@@ -195,11 +217,13 @@ const fetchAndCachePrices = async () => {
     const { highPrice: seedHighPrice, lowPrice: seedLowPrice } = extractPrices(data, selectedHerb.seedId);
     const { highPrice: herbHighPrice, lowPrice: herbLowPrice } = extractPrices(data, selectedHerb.herbId);
 
-    cachedPrices.seedPrice = calcAveragePrice(seedHighPrice, seedLowPrice);
-    cachedPrices.herbPrice = calcAveragePrice(herbHighPrice, herbLowPrice);
-    cachedPrices.lastFetched = new Date();
+    const seedPrice = calcAveragePrice(seedHighPrice, seedLowPrice);
+    const herbPrice = calcAveragePrice(herbHighPrice, herbLowPrice);
 
-    console.log(`Prices updated for ${selectedHerb.name}: Seed=${cachedPrices.seedPrice}gp, Herb=${cachedPrices.herbPrice}gp`);
+    // Store prices for this specific herb
+    setHerbPrices(selectedHerb.name, seedPrice, herbPrice);
+
+    console.log(`Prices updated for ${selectedHerb.name}: Seed=${seedPrice}gp, Herb=${herbPrice}gp`);
 
     // Update price displays
     updatePriceDisplays();
@@ -225,8 +249,10 @@ const fetchAndCachePrices = async () => {
 // Calculate herb run profit using cached prices
 const calcRunProfit = () => {
   try {
+    const selectedHerbPrices = getSelectedHerbPrices();
+
     // If no cached prices and not loading, don't show anything
-    if (!cachedPrices.seedPrice || !cachedPrices.herbPrice) {
+    if (!selectedHerbPrices || !selectedHerbPrices.seedPrice || !selectedHerbPrices.herbPrice) {
       if (!isLoadingPrices) {
         console.log("Prices not loaded yet");
         mainContent.style.display = "none";
@@ -242,8 +268,8 @@ const calcRunProfit = () => {
       return;
     }
 
-    const seedCost = patchCount * cachedPrices.seedPrice;
-    const harvestValue = herbCount * cachedPrices.herbPrice;
+    const seedCost = patchCount * selectedHerbPrices.seedPrice;
+    const harvestValue = herbCount * selectedHerbPrices.herbPrice;
     const herbRunProfit = harvestValue - seedCost;
 
     document.getElementById("harvest-count").textContent = herbCount;
