@@ -204,10 +204,8 @@ const fetchAndCachePrices = async () => {
     // Update price displays
     updatePriceDisplays();
 
-    // Recalculate if inputs have values
-    if (herbCountInput.value && patchCountInput.value) {
-      calcRunProfit();
-    }
+    // Always recalculate profit when prices are updated
+    calcRunProfit();
   } catch (error) {
     console.error("Error fetching prices:", error);
     // Show error state in price displays
@@ -227,14 +225,12 @@ const fetchAndCachePrices = async () => {
 // Calculate herb run profit using cached prices
 const calcRunProfit = () => {
   try {
-    // Don't calculate if prices are currently loading
-    if (isLoadingPrices) {
-      return;
-    }
-
+    // If no cached prices and not loading, don't show anything
     if (!cachedPrices.seedPrice || !cachedPrices.herbPrice) {
-      console.log("Prices not loaded yet");
-      mainContent.style.display = "none";
+      if (!isLoadingPrices) {
+        console.log("Prices not loaded yet");
+        mainContent.style.display = "none";
+      }
       return;
     }
 
