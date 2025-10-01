@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Link sheets, scripts, ico -->
+    <script defer src="script.js"></script>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" href="../assets/herb-buddy-logo.png" />
+    <!-- Generic Meta -->
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Simple tool to calculate the profit from your last herb run with the latest prices" />
+    <title>Herb Buddy</title>
+    <!-- OG Meta -->
+    <meta property="og:title" content="Herb Buddy" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://github.com/JoshPaulie/herbbuddy/blob/master/assets/herb-buddy-logo.png" />
+    <meta property="og:description" content="Simple tool to calculate the profit from your last herb run with the latest prices" />
+    <meta name="theme-color" content="#a6da95" />
+  </head>
+  <body>
+    <p class="center-class"><img src="../assets/herb-buddy-logo.png" class="logo" /></p>
+    <h1 class="green-underline">Herb Buddy</h1>
+    <div class="about-text">
+      <p class="center-text"><em>Simple tool to calculate the profit from your last herb run with the latest prices</em></p>
+      <p><b class="peach-text">Herbs</b> is how many herbs you harvested; <b class="peach-text">Patches</b> is how many patches (or <em>seeds</em>) used</p>
+    </div>
+    <div class="input-container">
+      <div class="input-pair">
+        <label for="herbCountInput">Herbs</label>
+        <input type="number" class="text-box" id="herbCountInput" placeholder="0" />
+      </div>
+      <div class="input-pair">
+        <label for="patchCountInput">Patches</label>
+        <input type="number" class="text-box" id="patchCountInput" placeholder="0" value="8" />
+      </div>
+    </div>
+    <div id="main-content" class="text-box">
+      <p>
+        With <span class="peach-text" id="harvest-count">...</span> ranarr herbs harvested from <span class="peach-text" id="patch-count">...</span> patches, <br />
+        you made about <span class="profit-amount green-text" id="profit-amount">...</span> <img class="coins-img" src="../assets/coins.png" alt="OSRS coins" /> profit. Nice!
+      </p>
+    </div>
+    <footer>
+      <p>RSN: <b>bexlii</b> | <a class="cutie-anchor" href="https://github.com/joshpaulie/herbbuddy">GitHub Repo</a></p>
+    </footer>
+  </body>
+</html>
