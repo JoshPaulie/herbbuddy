@@ -22,7 +22,7 @@
   </head>
   <body>
     <!-- Floating GitHub Button -->
-    <a href="https://github.com/joshpaulie/herbbuddy" class="github-floating-btn" title="View on GitHub" aria-label="View on GitHub">
+    <a href="https://github.com/joshpaulie/herbbuddy" target="_blank" class="github-floating-btn" title="View on GitHub" aria-label="View on GitHub">
       <i class="lni lni-github"></i>
     </a>
 
@@ -57,8 +57,8 @@
           </div>
 
           <div class="input-group">
-            <label for="patchCountInput">Patches Used</label>
-            <input type="number" id="patchCountInput" placeholder="8" value="8" min="0" />
+            <label for="seedCountInput">Seeds Used</label>
+            <input type="number" id="seedCountInput" placeholder="8" value="8" min="0" />
             <div class="price-info" id="seedPriceDisplay">
               <span class="price-value" id="seedPriceValue">Loading...</span>
               <span class="price-label">per seed</span>
@@ -73,7 +73,7 @@
               <span id="profit-amount">0</span>
               <img class="coins-img" src="assets/coins.png" alt="coins" />
             </div>
-            <div class="profit-details"><span id="harvest-count">0</span> <span id="herb-name">ranarr</span> herbs from <span id="patch-count">0</span> patches</div>
+            <div class="profit-details"><span id="harvest-count">0</span> <span id="herb-name">ranarr</span> herbs from <span id="seed-count">0</span> seeds</div>
           </div>
         </div>
       </section>
@@ -93,17 +93,20 @@
         <div class="modal-body">
           <p>The profit calculation is straightforward:</p>
           <div class="formula">
-            <strong>Profit = (Herbs Harvested × Herb Price) - (Patches Used × Seed Price)</strong>
+            <strong>Profit = (Herbs Harvested × Herb Price) - (Seeds Used × Seed Price)</strong>
           </div>
           <div class="formula-breakdown">
             <h4>Example:</h4>
             <ul>
-              <li><strong>Herbs Harvested:</strong> 5 Ranarr herbs</li>
+              <li><strong>Herbs Harvested:</strong> 56 Ranarr herbs</li>
               <li><strong>Herb Price:</strong> 8,000 gp each</li>
-              <li><strong>Patches Used:</strong> 8 patches</li>
+              <li><strong>Seeds Used:</strong> 8 seeds</li>
               <li><strong>Seed Price:</strong> 40,000 gp each</li>
             </ul>
-            <p><strong>Calculation:</strong> (5 × 8,000) - (8 × 40,000) = 40,000 - 320,000 = <span style="color: #ed8796">-280,000 gp</span></p>
+            <p><strong>Calculation:</strong> (56 × 8,000) - (8 × 40,000)</p>
+            <p><strong>Simplified:</strong> 448,000 - 320,000</p>
+            <p><strong>Result: </strong><span style="color: var(--ctp-macchiato-green)">128,000 gp</span></p>
+            <!-- <p><strong>Calculation:</strong> (56 × 8,000) - (8 × 40,000) = 448,000 - 320,000 = <span style="color: var(--ctp-macchiato-green)">128,000 gp</span></p> -->
           </div>
           <p><small>Prices are fetched live from the OSRS API and may fluctuate.</small></p>
         </div>

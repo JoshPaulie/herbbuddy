@@ -1,7 +1,7 @@
 "use strict";
 
 // Semantic version
-const VERSION = "2.1.0";
+const VERSION = "2.2.0";
 
 const HERB_DATA_CSV = `name,herb_id,seed_id
 Guam,249,5291
@@ -26,7 +26,7 @@ let isLoadingPrices = false;
 
 // DOM elements
 const herbCountInput = document.getElementById("herbCountInput");
-const patchCountInput = document.getElementById("patchCountInput");
+const seedCountInput = document.getElementById("seedCountInput");
 const herbTypeSelect = document.getElementById("herbTypeSelect");
 const refreshPricesBtn = document.getElementById("refreshPricesBtn");
 const mainContent = document.getElementById("main-content");
@@ -101,7 +101,7 @@ const loadSelectedHerb = () => {
 const addEventListeners = () => {
   // Add direct input listeners without debounce since prices are cached
   herbCountInput.addEventListener("input", calcRunProfit);
-  patchCountInput.addEventListener("input", calcRunProfit);
+  seedCountInput.addEventListener("input", calcRunProfit);
 
   herbTypeSelect.addEventListener("change", () => {
     saveSelectedHerb();
@@ -151,16 +151,16 @@ const updatePriceDisplays = () => {
 const setInputsLoadingState = (loading) => {
   isLoadingPrices = loading;
   herbCountInput.disabled = loading;
-  patchCountInput.disabled = loading;
+  seedCountInput.disabled = loading;
   herbTypeSelect.disabled = loading;
 
   if (loading) {
     herbCountInput.style.opacity = "0.6";
-    patchCountInput.style.opacity = "0.6";
+    seedCountInput.style.opacity = "0.6";
     herbTypeSelect.style.opacity = "0.6";
   } else {
     herbCountInput.style.opacity = "1";
-    patchCountInput.style.opacity = "1";
+    seedCountInput.style.opacity = "1";
     herbTypeSelect.style.opacity = "1";
   }
 };
@@ -260,20 +260,20 @@ const calcRunProfit = () => {
       return;
     }
 
-    const patchCount = parseInt(patchCountInput.value);
+    const seedCount = parseInt(seedCountInput.value);
     const herbCount = parseInt(herbCountInput.value);
 
-    if (isNaN(patchCount) || isNaN(herbCount)) {
+    if (isNaN(seedCount) || isNaN(herbCount)) {
       mainContent.style.display = "none";
       return;
     }
 
-    const seedCost = patchCount * selectedHerbPrices.seedPrice;
+    const seedCost = seedCount * selectedHerbPrices.seedPrice;
     const harvestValue = herbCount * selectedHerbPrices.herbPrice;
     const herbRunProfit = harvestValue - seedCost;
 
     document.getElementById("harvest-count").textContent = herbCount;
-    document.getElementById("patch-count").textContent = patchCount;
+    document.getElementById("seed-count").textContent = seedCount;
 
     const profitAmountElement = document.getElementById("profit-amount");
     profitAmountElement.textContent = herbRunProfit.toLocaleString("en-US");
