@@ -191,6 +191,11 @@ const calcAveragePrice = (highPrice, lowPrice) => {
   return Math.round((highPrice + lowPrice) / 2);
 };
 
+// Helper function to determine singular vs plural form
+const getPluralForm = (count, singular, plural) => {
+  return count === 1 ? singular : plural;
+};
+
 // Fetch and cache prices for selected herb
 const fetchAndCachePrices = async () => {
   const selectedHerb = getSelectedHerbData();
@@ -274,6 +279,10 @@ const calcRunProfit = () => {
 
     document.getElementById("harvest-count").textContent = herbCount;
     document.getElementById("seed-count").textContent = seedCount;
+
+    // Update singular/plural forms
+    document.getElementById("herb-unit").textContent = getPluralForm(herbCount, "herb", "herbs");
+    document.getElementById("seed-unit").textContent = getPluralForm(seedCount, "seed", "seeds");
 
     const profitAmountElement = document.getElementById("profit-amount");
     profitAmountElement.textContent = herbRunProfit.toLocaleString("en-US");
