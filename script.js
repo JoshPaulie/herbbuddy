@@ -107,10 +107,10 @@ const addEventListeners = () => {
     saveSelectedHerb();
     updateHerbNameDisplay();
     updatePriceDisplays(); // Reset price displays to loading state
-    fetchAndCachePrices();
+    fetchAndCachePrices({ forceRefresh: false }); // Use cache when switching herbs
   });
 
-  refreshPricesBtn.addEventListener("click", fetchAndCachePrices);
+  refreshPricesBtn.addEventListener("click", () => fetchAndCachePrices({ forceRefresh: true })); // Force refresh when button clicked
 };
 
 // Update herb name in the results display
@@ -197,13 +197,13 @@ const getPluralForm = (count, singular, plural) => {
 };
 
 // Fetch and cache prices for selected herb
-const fetchAndCachePrices = async () => {
+const fetchAndCachePrices = async ({ forceRefresh = false } = {}) => {
   const selectedHerb = getSelectedHerbData();
   if (!selectedHerb) return;
 
   // Check if we already have cached prices for this herb
   const existingPrices = getSelectedHerbPrices();
-  if (existingPrices && existingPrices.seedPrice && existingPrices.herbPrice) {
+  if (!forceRefresh && existingPrices && existingPrices.seedPrice && existingPrices.herbPrice) {
     console.log(`Using cached prices for ${selectedHerb.name}`);
     updatePriceDisplays();
     calcRunProfit();
@@ -228,7 +228,7 @@ const fetchAndCachePrices = async () => {
     // Store prices for this specific herb
     setHerbPrices(selectedHerb.name, seedPrice, herbPrice);
 
-    console.log(`Prices updated for ${selectedHerb.name}: Seed=${seedPrice}gp, Herb=${herbPrice}gp`);
+    console.log(`Prices ${forceRefresh ? "refreshed" : "fetched"} for ${selectedHerb.name}: Seed=${seedPrice}gp, Herb=${herbPrice}gp`);
 
     // Update price displays
     updatePriceDisplays();
@@ -316,7 +316,7 @@ const init = async () => {
     versionElement.textContent = `v${VERSION}`;
   }
 
-  await fetchAndCachePrices();
+  await fetchAndCachePrices({ forceRefresh: true }); // Initial load should use cache
 };
 
 // Modal functionality
