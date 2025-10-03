@@ -214,7 +214,7 @@ const fetchAndCachePrices = async ({ forceRefresh = false } = {}) => {
     // Show loading state
     setInputsLoadingState(true);
     updatePriceDisplays();
-    refreshPricesBtn.style.opacity = "0.5";
+    refreshPricesBtn.classList.add("loading");
     refreshPricesBtn.disabled = true;
 
     const data = await fetchData("https://prices.runescape.wiki/api/v1/osrs/latest");
@@ -246,7 +246,7 @@ const fetchAndCachePrices = async ({ forceRefresh = false } = {}) => {
     // Reset loading state
     setInputsLoadingState(false);
     updatePriceDisplays();
-    refreshPricesBtn.style.opacity = "1";
+    refreshPricesBtn.classList.remove("loading");
     refreshPricesBtn.disabled = false;
   }
 };
