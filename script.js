@@ -21,7 +21,7 @@ Dwarf,267,5303
 Torstol,269,5304`;
 
 let herbData = [];
-let cachedPrices = {}; // Will store prices by herb name: { herbName: { seedPrice, herbPrice, lastFetched } }
+let globalPriceCache = null; // Will store all price data from API: { data: {...}, lastFetched: Date }
 let isLoadingPrices = false;
 
 // DOM elements
@@ -68,20 +68,32 @@ const getSelectedHerbData = () => {
   return herbData.find((herb) => herb.name === selectedName);
 };
 
+// Get prices for a specific herb from global cache
+const getHerbPricesFromCache = (herbName) => {
+  if (!globalPriceCache || !globalPriceCache.data) return null;
+
+  const herb = herbData.find((h) => h.name === herbName);
+  if (!herb) return null;
+
+  try {
+    const { highPrice: seedHighPrice, lowPrice: seedLowPrice } = extractPrices(globalPriceCache.data, herb.seedId);
+    const { highPrice: herbHighPrice, lowPrice: herbLowPrice } = extractPrices(globalPriceCache.data, herb.herbId);
+
+    const seedPrice = calcAveragePrice(seedHighPrice, seedLowPrice);
+    const herbPrice = calcAveragePrice(herbHighPrice, herbLowPrice);
+
+    return { seedPrice, herbPrice };
+  } catch (error) {
+    console.error(`Error extracting prices for ${herbName}:`, error);
+    return null;
+  }
+};
+
 // Get cached prices for the selected herb
 const getSelectedHerbPrices = () => {
   const selectedHerb = getSelectedHerbData();
   if (!selectedHerb) return null;
-  return cachedPrices[selectedHerb.name] || null;
-};
-
-// Set cached prices for a specific herb
-const setHerbPrices = (herbName, seedPrice, herbPrice) => {
-  cachedPrices[herbName] = {
-    seedPrice,
-    herbPrice,
-    lastFetched: new Date(),
-  };
+  return getHerbPricesFromCache(selectedHerb.name);
 };
 
 // Save selected herb to localStorage
@@ -106,11 +118,11 @@ const addEventListeners = () => {
   herbTypeSelect.addEventListener("change", () => {
     saveSelectedHerb();
     updateHerbNameDisplay();
-    updatePriceDisplays(); // Reset price displays to loading state
-    fetchAndCachePrices({ forceRefresh: false }); // Use cache when switching herbs
+    updatePriceDisplays(); // Update displays with cached data
+    calcRunProfit(); // Recalculate profit with cached data
   });
 
-  refreshPricesBtn.addEventListener("click", () => fetchAndCachePrices({ forceRefresh: true })); // Force refresh when button clicked
+  refreshPricesBtn.addEventListener("click", () => fetchAllPrices()); // Refresh when button clicked
 };
 
 // Update herb name in the results display
@@ -196,20 +208,8 @@ const getPluralForm = (count, singular, plural) => {
   return count === 1 ? singular : plural;
 };
 
-// Fetch and cache prices for selected herb
-const fetchAndCachePrices = async ({ forceRefresh = false } = {}) => {
-  const selectedHerb = getSelectedHerbData();
-  if (!selectedHerb) return;
-
-  // Check if we already have cached prices for this herb
-  const existingPrices = getSelectedHerbPrices();
-  if (!forceRefresh && existingPrices && existingPrices.seedPrice && existingPrices.herbPrice) {
-    console.log(`Using cached prices for ${selectedHerb.name}`);
-    updatePriceDisplays();
-    calcRunProfit();
-    return;
-  }
-
+// Fetch and cache all prices
+const fetchAllPrices = async () => {
   try {
     // Show loading state
     setInputsLoadingState(true);
@@ -217,20 +217,18 @@ const fetchAndCachePrices = async ({ forceRefresh = false } = {}) => {
     refreshPricesBtn.classList.add("loading");
     refreshPricesBtn.disabled = true;
 
+    console.log("Fetching all price data from API...");
     const data = await fetchData("https://prices.runescape.wiki/api/v1/osrs/latest");
 
-    const { highPrice: seedHighPrice, lowPrice: seedLowPrice } = extractPrices(data, selectedHerb.seedId);
-    const { highPrice: herbHighPrice, lowPrice: herbLowPrice } = extractPrices(data, selectedHerb.herbId);
+    // Store all data in global cache
+    globalPriceCache = {
+      data: data,
+      lastFetched: new Date(),
+    };
 
-    const seedPrice = calcAveragePrice(seedHighPrice, seedLowPrice);
-    const herbPrice = calcAveragePrice(herbHighPrice, herbLowPrice);
+    console.log("All prices fetched and cached");
 
-    // Store prices for this specific herb
-    setHerbPrices(selectedHerb.name, seedPrice, herbPrice);
-
-    console.log(`Prices ${forceRefresh ? "refreshed" : "fetched"} for ${selectedHerb.name}: Seed=${seedPrice}gp, Herb=${herbPrice}gp`);
-
-    // Update price displays
+    // Update price displays for current herb
     updatePriceDisplays();
 
     // Always recalculate profit when prices are updated
@@ -316,7 +314,7 @@ const init = async () => {
     versionElement.textContent = `v${VERSION}`;
   }
 
-  await fetchAndCachePrices({ forceRefresh: true }); // Initial load should use cache
+  await fetchAllPrices(); // Initial load fetches all data
 };
 
 // Modal functionality
