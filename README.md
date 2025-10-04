@@ -3,9 +3,16 @@
 </p>
 
 # Herb Buddy
-Simple tool to calculate the profit from your last herb run
+OSRS herb run profit calculator with live GE prices
 
 ## How it works
-The current GE price of seeds and herbs is pulled from the OSRS wiki, then the run profit is calculated with the following formula
+Live GE prices are pulled from the wiki when you load the page, and are cached in the background.
 
-`Profit = (Price of Seed * Number of Seeds) - (Price of Herb * Herbs Harvested)`
+Input the amount of seeds you used, and how many herbs you harvested, to calculate your total profit.
+
+The following formula is used: `Profit = (Price of Herb * Herbs Harvested) - (Price of Seed * Number of Seeds)`
+
+You can change the herb type by using the dropdown:
+
+![Dropdown example](assets/change-herb.png)
+
