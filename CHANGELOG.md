@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.0] - 2025-10-04
+
+- Fix profit details to include singular/plural forms for items
+- Better description
+- Add responsiveness to refresh button
+- Fix redundant API calls
+- Add change log link in version
+
 ## [2.2.0] - 2025-10-01
 
 - Rename all references to "patches" to "seeds" for user clarity

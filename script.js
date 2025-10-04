@@ -1,7 +1,7 @@
 "use strict";
 
 // Semantic version
-const VERSION = "2.2.0";
+const VERSION = "2.3.0";
 
 const HERB_DATA_CSV = `name,herb_id,seed_id
 Guam,249,5291
