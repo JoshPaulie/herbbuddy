@@ -1,7 +1,7 @@
 "use strict";
 
 // Semantic version
-const VERSION = "2.3.0";
+const VERSION = "2.4.0";
 
 const HERB_DATA_CSV = `name,herb_id,seed_id
 Guam,249,5291
@@ -60,6 +60,12 @@ const populateHerbDropdown = () => {
     }
     herbTypeSelect.appendChild(option);
   });
+
+  // Add "Other" option at the end
+  const otherOption = document.createElement("option");
+  otherOption.value = "Other";
+  otherOption.textContent = "Other";
+  herbTypeSelect.appendChild(otherOption);
 };
 
 // Get selected herb data
@@ -116,6 +122,22 @@ const addEventListeners = () => {
   seedCountInput.addEventListener("input", calcRunProfit);
 
   herbTypeSelect.addEventListener("change", () => {
+    // Check if "Other" was selected
+    if (herbTypeSelect.value === "Other") {
+      // Show the report herb modal
+      const reportHerbModal = document.getElementById("reportHerbModal");
+      reportHerbModal.style.display = "block";
+
+      // Reset to previously selected herb (or default to Ranarr)
+      const savedHerb = localStorage.getItem("selectedHerb");
+      if (savedHerb && herbData.find((h) => h.name === savedHerb)) {
+        herbTypeSelect.value = savedHerb;
+      } else {
+        herbTypeSelect.value = "Ranarr";
+      }
+      return;
+    }
+
     saveSelectedHerb();
     updateHerbNameDisplay();
     updatePriceDisplays(); // Update displays with cached data
@@ -319,31 +341,47 @@ const init = async () => {
 
 // Modal functionality
 const initModal = () => {
-  const modal = document.getElementById("profitModal");
+  const profitModal = document.getElementById("profitModal");
   const profitInfoIcon = document.getElementById("profitInfoIcon");
-  const closeModal = document.getElementById("closeModal");
+  const closeProfitModal = document.getElementById("closeModal");
 
-  // Open modal when info icon is clicked
+  const reportHerbModal = document.getElementById("reportHerbModal");
+  const closeReportModal = document.getElementById("closeReportModal");
+
+  // Open profit modal when info icon is clicked
   profitInfoIcon.addEventListener("click", () => {
-    modal.style.display = "block";
+    profitModal.style.display = "block";
   });
 
-  // Close modal when X is clicked
-  closeModal.addEventListener("click", () => {
-    modal.style.display = "none";
+  // Close profit modal when X is clicked
+  closeProfitModal.addEventListener("click", () => {
+    profitModal.style.display = "none";
   });
 
-  // Close modal when clicking outside of it
+  // Close report herb modal when X is clicked
+  closeReportModal.addEventListener("click", () => {
+    reportHerbModal.style.display = "none";
+  });
+
+  // Close modals when clicking outside of them
   window.addEventListener("click", (event) => {
-    if (event.target === modal) {
-      modal.style.display = "none";
+    if (event.target === profitModal) {
+      profitModal.style.display = "none";
+    }
+    if (event.target === reportHerbModal) {
+      reportHerbModal.style.display = "none";
     }
   });
 
-  // Close modal with Escape key
+  // Close modals with Escape key
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && modal.style.display === "block") {
-      modal.style.display = "none";
+    if (event.key === "Escape") {
+      if (profitModal.style.display === "block") {
+        profitModal.style.display = "none";
+      }
+      if (reportHerbModal.style.display === "block") {
+        reportHerbModal.style.display = "none";
+      }
     }
   });
 };

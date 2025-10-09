@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.4.0] - 2025-10-09
+- Add "other" herb type option to guide users to file an issue
+- Improve mobile UI
+
 ## [2.3.0] - 2025-10-04
 
 - Fix profit details to include singular/plural forms for items
@@ -41,3 +45,4 @@ Inefficient API calls, bad UI, you didn't miss much.
 
 - Base functionality
 - Ranarr seed only
+- Version "1" can still be accessed [here](https://bexli.dev/herbbuddy/v1/)
